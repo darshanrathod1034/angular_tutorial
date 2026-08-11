@@ -1,0 +1,91 @@
+<div class="explore-page">
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-brand" (click)="goHome()">🌍 TravelApp</div>
+    <div class="nav-links">
+      <button class="nav-btn" (click)="goHome()">Home</button>
+      <button class="nav-btn active">Explore</button>
+      <button class="nav-btn" (click)="goToProfile()">Profile</button>
+    </div>
+    <button class="btn-logout" (click)="logout()">Logout</button>
+  </nav>
+
+  <div class="explore-container">
+    <div class="explore-header">
+      <h1>Explore community updates</h1>
+      <p class="subtitle">See what other travelers are sharing around the world</p>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Fetching amazing posts...</p>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (!isLoading() && errorMessage()) {
+      <div class="error-state">
+        <p>⚠️ {{ errorMessage() }}</p>
+        <button class="btn-retry" (click)="loadPosts()">Try Again</button>
+      </div>
+    }
+
+    <!-- Empty State -->
+    @if (!isLoading() && !errorMessage() && posts().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">🗺️</div>
+        <h3>No posts yet</h3>
+        <p>Be the first to share an adventure!</p>
+      </div>
+    }
+
+    <!-- Posts Grid -->
+    @if (!isLoading() && posts().length > 0) {
+      <div class="posts-grid">
+        @for (post of posts(); track post._id) {
+          <div class="post-card">
+            
+            <!-- Post Header (User details) -->
+            <div class="post-header">
+              <div class="user-avatar">
+                {{ (post.userid ?? post.user)?.fullname?.charAt(0)?.toUpperCase() ?? '👤' }}
+              </div>
+              <div class="user-info">
+                <h4>{{ (post.userid ?? post.user)?.fullname ?? 'Anonymous Traveler' }}</h4>
+                <span class="post-date">{{ post.createdAt | date:'mediumDate' }}</span>
+              </div>
+            </div>
+
+            <!-- Post Media/Image if available -->
+            @if (post.picture || post.image) {
+              <div class="post-media">
+                <img [src]="post.picture || post.image" alt="Post media" />
+              </div>
+            }
+
+            <!-- Post Content -->
+            <div class="post-content">
+              @if (post.location) {
+                <span class="post-location">📍 {{ post.location }}</span>
+              }
+              <h3>{{ post.name ?? post.title ?? 'My Journey' }}</h3>
+              <p class="post-text">{{ post.description ?? post.caption ?? post.content ?? '' }}</p>
+            </div>
+
+            <!-- Post Footer/Stats -->
+            <div class="post-footer">
+              <span class="stat">❤️ {{ post.likes ?? post.likedBy?.length ?? 0 }} Likes</span>
+              <span class="stat">💬 {{ post.comments?.length ?? 0 }} Comments</span>
+            </div>
+
+
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+</div>

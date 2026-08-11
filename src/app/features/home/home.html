@@ -1,1 +1,50 @@
-<p>home works!</p>
+<div class="home-page">
+
+  <nav class="navbar">
+    <span class="brand" (click)="goToExplore()">🌍 TravelApp</span>
+    <div class="nav-actions">
+      <button class="btn-nav" (click)="goToExplore()">Explore Feed</button>
+      <!-- Profile Button -->
+      <button class="btn-profile" (click)="goToProfile()">
+        <span class="profile-avatar">
+          {{ user()?.fullname?.charAt(0)?.toUpperCase() ?? '?' }}
+        </span>
+        <span>{{ user()?.fullname ?? 'My Profile' }}</span>
+      </button>
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="home-content">
+    <h1>Welcome back, {{ user()?.fullname ?? 'Traveler' }}! 👋</h1>
+    <p class="subtitle">Explore destinations and manage your trips.</p>
+
+    <div class="dashboard-grid">
+      <!-- Quick profile card to go to profile -->
+      <div class="quick-card" (click)="goToProfile()">
+        <div class="quick-avatar">
+          {{ user()?.fullname?.charAt(0)?.toUpperCase() ?? '?' }}
+        </div>
+        <div class="quick-info">
+          <strong>{{ user()?.fullname }}</strong>
+          <span>{{ user()?.email }}</span>
+          <span class="quick-link">View & Edit Profile →</span>
+        </div>
+      </div>
+
+      <!-- Quick explore card to go to explore -->
+      <div class="quick-card explore-banner" (click)="goToExplore()">
+        <div class="quick-avatar explore-icon">
+          🗺️
+        </div>
+        <div class="quick-info">
+          <strong>Explore Community</strong>
+          <span>See photos and reviews from others</span>
+          <span class="quick-link">Go to Explore Feed →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>

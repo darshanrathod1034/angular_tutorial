@@ -1,1 +1,161 @@
-<p>profile works!</p>
+<div class="profile-page">
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <button class="btn-back" (click)="goHome()">
+      ← Home
+    </button>
+    <span class="nav-title">My Profile</span>
+    <button class="btn-logout" (click)="logout()">Logout</button>
+  </nav>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading your profile...</p>
+    </div>
+  }
+
+  <!-- Profile Content -->
+  @if (!isLoading() && user()) {
+    <div class="profile-container">
+
+      <!-- Avatar Card -->
+      <div class="avatar-card">
+        <div class="avatar-circle">
+          {{ user()!.fullname.charAt(0).toUpperCase() }}
+        </div>
+        <h2 class="avatar-name">{{ user()!.fullname }}</h2>
+        <p class="avatar-email">{{ user()!.email }}</p>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="stat-value">{{ user()!.credits ?? 0 }}</span>
+            <span class="stat-label">Credits</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">{{ user()!.trips?.length ?? 0 }}</span>
+            <span class="stat-label">Trips</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">{{ user()!.referralCode ?? '—' }}</span>
+            <span class="stat-label">Referral</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success / Error Messages -->
+      @if (successMessage()) {
+        <div class="alert alert-success">✅ {{ successMessage() }}</div>
+      }
+      @if (errorMessage()) {
+        <div class="alert alert-error">❌ {{ errorMessage() }}</div>
+      }
+
+      <!-- Profile Details Card -->
+      <div class="details-card">
+        <div class="card-header">
+          <h3>Profile Details</h3>
+          @if (!isEditMode()) {
+            <button class="btn-edit" (click)="enableEditMode()">✏️ Edit Profile</button>
+          }
+        </div>
+
+        <!-- VIEW MODE: Show fields as read-only -->
+        @if (!isEditMode()) {
+          <div class="field-list">
+            <div class="field-row">
+              <span class="field-icon">👤</span>
+              <div class="field-info">
+                <label>Full Name</label>
+                <span>{{ user()!.fullname }}</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <span class="field-icon">📧</span>
+              <div class="field-info">
+                <label>Email</label>
+                <span>{{ user()!.email }}</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <span class="field-icon">📞</span>
+              <div class="field-info">
+                <label>Phone</label>
+                <span>{{ user()!.phone ?? 'Not set' }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- EDIT MODE: Show form fields -->
+        @if (isEditMode()) {
+          <form [formGroup]="profileForm" (ngSubmit)="onSave()" class="edit-form">
+
+            <!-- Full Name Field -->
+            <div class="form-group">
+              <label for="fullname">Full Name</label>
+              <input
+                id="fullname"
+                type="text"
+                formControlName="fullname"
+                placeholder="Enter your full name"
+                [class.input-error]="profileForm.get('fullname')?.invalid && profileForm.get('fullname')?.touched"
+              />
+              @if (profileForm.get('fullname')?.invalid && profileForm.get('fullname')?.touched) {
+                <span class="error-text">Full name must be at least 2 characters</span>
+              }
+            </div>
+
+            <!-- Email Field -->
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                placeholder="Enter your email"
+                [class.input-error]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched"
+              />
+              @if (profileForm.get('email')?.invalid && profileForm.get('email')?.touched) {
+                <span class="error-text">Please enter a valid email</span>
+              }
+            </div>
+
+            <!-- Phone Field -->
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input
+                id="phone"
+                type="tel"
+                formControlName="phone"
+                placeholder="Enter your phone number"
+              />
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+              <button type="button" class="btn-cancel" (click)="cancelEdit()">
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn-save"
+                [disabled]="profileForm.invalid || isSaving()"
+              >
+                {{ isSaving() ? 'Saving...' : 'Save Changes' }}
+              </button>
+            </div>
+
+          </form>
+        }
+      </div>
+
+    </div>
+  }
+
+</div>
